@@ -12,11 +12,18 @@ User sends ETH to the adress displayed on website. This will update your balance
 Requirements to run program:
 
 Install GETH - ETH cleint that allows us to interact with ETH blockchain
+
 Install Solidity - Code to write ETH smart contracts 
+
 Install Node.JS
+
 Install Truffle suite - npm install --g truffle@5.1.39
+
 Install Ganash - blockchain that we will run our on computer. Allows us to make smart 				                contracts and use the blockchain without using any real money
-- Install metamask exteention on google chrome and make account 
+
+Install metamask exteention on google chrome and make account
+
+  
 intall necessray node packages and web3 packages
 
 run html: open -a "Google Chrome" index.html 
