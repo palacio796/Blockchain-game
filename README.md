@@ -29,6 +29,9 @@ install necessray node packages and web3 packages
 
 run html: open -a "Google Chrome" index.html 
 
+youtube link: https://youtu.be/5MVk5S0tjcg
+
+
 
 
 
