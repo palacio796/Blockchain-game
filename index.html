@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <!---Some simple UI-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coin Flip Game</title>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .bet-section {
+        margin-top:20px;
+    }
+
+    .bet-buttons button{
+        margin:5px;
+        padding: 10px;
+        cursor: pointer;
+    }
+    .bet-buttons button.active{
+        background-color: yellow;
+    }
+</style>
+</head>
+<body>
+    
+    <h1>Coin Flip Game</h1>
+
+    <!--ETH address-->
+    <div class = "bet-section">
+        <p>Send ETH to this address:</p>
+        <p id=""ethereumAddress">0x5D72819402642b246348ECdE001bCe5920B0499b</p>
+    </div>
+
+    <!--User Balance-->
+    <div class="bet-section">
+        <p>Your Balance: <span id="userBalance">  0  </span> ETH</p>
+    </div>
+
+    <!-- Place bets button  -->
+    <div class="bet-section">
+        <label for="betAmount">Bet Amount</label>
+        <input type="number" id="betAmount" class="bet-input" min="1" step="1" placeholder="ETH">
+        <button id="placeBetButton" onclick="placeBet()">Place Bet</button>
+    </div>
+
+    <p>Pick a side to bet on</p>
+
+    <!-- Buttons for Heads and Tails -->
+    <div class="bet-buttons">
+        <button onclick="selectSide('Heads')">Heads</button>
+        <button onclick="selectSide('Tails')">Tails</button>
+    </div>
+
+
+
+    <p>Flip Result: <span id="flipResult">Not Flipped Yet</span></p>
+    <button onclick="flipCoin()">Flip Coin</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+
+    <script>
+
+        const ethereumAddress = '0x5D72819402642b246348ECdE001bCe5920B0499b';
+        async function checkBalance(){
+            try{
+                const web3 = new Web3(window.ethereum);
+                const balance = await web3.eth.getBalance(ethereumAddress);
+                console.log('Balance:', web3.utils.fromWei(balance, 'ether'), 'ETH');
+                document.getElementById('userBalance').textContent = web3.utils.fromWei(balance, 'ether');
+
+            }catch(error){
+                console.error('Error checking balance:', error.message);
+            }
+
+        }
+        window.addEventListener('load', checkBalance);
+
+    </script>
+    <script>
+
+        function selectSide(side){
+            //'removes any active buttons'
+            const buttons = document.querySelectorAll('.bet-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            const selectedButton = Array.from(buttons).find(button => button.innerText.includes(side));
+            if (selectedButton) {
+                selectedButton.classList.add('active');
+        }
+    }
+    </script>
+
+    <script>
+
+        function placeBet(){
+            const betAmount = document.getElementById('betAmount').value;
+            console.log('Bet Amount:', betAmount);
+
+            const placeBetButton = document.getElementById('placeBetButton');
+            placeBetButton.style.backgroundColor = 'green';
+        }
+
+    </script>
+    <script>
+
+        async function flipCoin() {
+            const resultElement = document.getElementById('flipResult');
+
+            try{
+                const randomNumber = Math.floor(Math.random() *10) +1;
+                const isEven = randomNumber % 2 === 0;
+
+                resultElement.textContent = isEven ? 'Heads' : 'Tails';
+
+
+            } catch(error){
+                console.error('Error flipping the coin', error.messege)
+                resultElement.textContent = 'Error flipping the coin';
+            }
+
+        }
+        
+
+
+    //JS to interct with solidity smart contract
+        // async function flipCoin(){
+        // const resultElement = document.getElementById('flipResult');
+
+        // //check if web3 is working with metamask
+        // //if (typeof window.ethereum !== 'undefined') {
+
+        //     try {
+        //         window.web3 = new Web3(ethereum);
+        //         await ethereum.request({ method: 'eth_requestAccounts' });
+
+        //         // get the selected ETH address
+        //         const accounts = await web3.eth.getAccounts();
+        //         const userAddress = accounts[0];
+
+        //         //randomly generate 0 or 1 
+        //         const randomNumber = Math.floor(Math.random()*2);
+
+        //         //display result
+        //         resultElement.textContent = randomNumber == 0 ? 'Heads' : 'Tails';
+
+        //         get smart contract instance
+        //         const contractAdress = '0x5D72819402642b246348ECdE001bCe5920B0499b';
+        //         abi
+        //         const contractABI = [       
+        //                                 {
+        //                                 "inputs": [],
+        //                                 "stateMutability": "nonpayable",
+        //                                 "type": "constructor"
+        //                                 },
+        //                                 {
+        //                                 "anonymous": false,
+        //                                 "inputs": [
+        //                                     {
+        //                                     "indexed": false,
+        //                                     "internalType": "bool",
+        //                                     "name": "result",
+        //                                     "type": "bool"
+        //                                     }
+        //                                 ],
+        //                                 "name": "CoinFliped",
+        //                                 "type": "event"
+        //                                 },
+        //                                 {
+        //                                 "inputs": [],
+        //                                 "name": "lastFlipResult",
+        //                                 "outputs": [
+        //                                     {
+        //                                     "internalType": "uint256",
+        //                                     "name": "",
+        //                                     "type": "uint256"
+        //                                     }
+        //                                 ],
+        //                                 "stateMutability": "view",
+        //                                 "type": "function"
+        //                                 },
+        //                                 {
+        //                                 "inputs": [],
+        //                                 "name": "lastFlipTimestamp",
+        //                                 "outputs": [
+        //                                     {
+        //                                     "internalType": "uint256",
+        //                                     "name": "",
+        //                                     "type": "uint256"
+        //                                     }
+        //                                 ],
+        //                                 "stateMutability": "view",
+        //                                 "type": "function"
+        //                                 },
+        //                                 {
+        //                                 "inputs": [],
+        //                                 "name": "owner",
+        //                                 "outputs": [
+        //                                     {
+        //                                     "internalType": "address",
+        //                                     "name": "",
+        //                                     "type": "address"
+        //                                     }
+        //                                 ],
+        //                                 "stateMutability": "view",
+        //                                 "type": "function"
+        //                                 },
+        //                                 {
+        //                                 "inputs": [],
+        //                                 "name": "flipCoin",
+        //                                 "outputs": [],
+        //                                 "stateMutability": "nonpayable",
+        //                                 "type": "function"
+        //                                 }
+        //                             ]
+        //         const game = new web3.eth.Contract(contractABI, contractAdress);
+
+        //         await game.methods.flipCoin().send({ from: userAddress});
+                
+
+        //     } catch (error){
+        //         console.error('Error Placing the bet', error.message);
+        //     }
+        // } else {
+        //     handles metamsk not beinf installed or started up
+        //     console.error('Metamask not intalled or not booted');
+            
+        // }
+
+        // }
+        </script>
+    </body>
+</html>
